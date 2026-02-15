@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request
 import requests
 from PIL import Image
-
-
 import os
+
 
 app = Flask(__name__)
 folderPath = './images'
@@ -32,6 +31,13 @@ def get_one_image(img):
     return jsonify(imgData)
 
 
+#Tested with postman it works! Similar to retrieving a single image except using os to remove the file send
+#via the path param.
+@app.route('/delete/<img>', methods=['DELETE'])
+def delete_img(img):
+    os.remove(f'{folderPath}/{img}')
+    return f'{img} has been deleted'
+    
 
 if __name__ == '__main__':
     print('API server is starting')
