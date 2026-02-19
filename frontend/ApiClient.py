@@ -30,7 +30,7 @@ class MainWindow(Tk):
 
     def create_widgets(self):
         style = Style()
-        style.configure("Blue.TFrame", background="lightblue")
+        style.configure("Blue.TFrame", background="lightblue") #default stylings lifted one-to-one from last assignment
         style.configure("TLabel", background="lightblue")
 
         self.main_frame = Frame(self, style="Blue.TFrame")
@@ -43,16 +43,16 @@ class MainWindow(Tk):
         dropdown_row = Frame(self.main_frame, style="Blue.TFrame")
         dropdown_row.pack(pady=10)
 
-        Label(dropdown_row, text="Select Image:").grid(row=0, column=0, padx=5)
+        Label(dropdown_row, text="Select Image:").grid(row=0, column=0, padx=5) #will not need to change the label at any point
 
-        self.dropdown = ttk.Combobox(dropdown_row, textvariable=self.selected_image_name, state="readonly")
+        self.dropdown = ttk.Combobox(dropdown_row, textvariable=self.selected_image_name, state="readonly") #add the label and dropdown side by side
         self.dropdown.grid(row=0, column=1, padx=5)
 
         load_btn = Button(dropdown_row, text="Load Image", command=self.load_selected_image) #handle the load image of retrieving image from collection
         load_btn.grid(row=0, column=2, padx=5)
 
         # Image display
-        self.image_label = Label(self.main_frame)
+        self.image_label = Label(self.main_frame) #actual display label that holds the loaded image
         self.image_label.pack(pady=10)
 
         # Upload button
@@ -78,7 +78,7 @@ class MainWindow(Tk):
 
     def load_selected_image(self): #load the one image given by its url that was retrieved by fetch_image list
         filename = self.selected_image_name.get()
-        if not filename:
+        if not filename: #each catch-all if passed a null
             return
 
         try:
@@ -103,7 +103,7 @@ class MainWindow(Tk):
 
     def upload_image(self):
         filepath = filedialog.askopenfilename(filetypes=[("Image files", "*.png *.jpg *.jpeg")]) #enforces strict compliance with image format to avoid bad actors
-        if not filepath:
+        if not filepath: #each catch-all if passed a null
             return
 
         try:
