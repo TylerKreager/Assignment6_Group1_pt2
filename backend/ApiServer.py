@@ -1,11 +1,12 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import requests
 from PIL import Image
 import os
 
 
 app = Flask(__name__)
-folderPath = './images'
+server_root = os.path.dirname(os.path.abspath(__file__))
+folderPath = os.path.join(server_root, "images")
 @app.route('/', methods=['GET']) 
 def homepage():
     
@@ -25,10 +26,11 @@ def get_all_images():
 #This value is then concatinated in an arg for Image.open with folderPath.
 @app.route('/oneImage/<img>', methods=['GET'])
 def get_one_image(img):
-    image = Image.open(f'{folderPath}/{img}')
+    img_path = os.path.join(folderPath, img)
+    image = Image.open(img_path)
     imgData = {'format': image.format, 'size': image.size, 'mode': image.mode}
         
-    return jsonify(imgData)
+    return send_file(img_path, mimetype=f'image/{image.format.lower()}')
 
 
 #Works tested in postman go to body/ form-data radiobutton/ key = image, File in dropdown, value = selecting img from local machine. 
@@ -40,10 +42,12 @@ def upload_image():
     
     #assigning image to file, image is passed in via the HTTP request object its and its catergory is "files"
     file = request.files['image']
+    image = Image.open(file)
     
     #concatetanating the folder path and the image name then passing savepath as an argument to file.save() which will save it.
-    savepath = os.path.join(folderPath, file.filename)
-    file.save(savepath)
+    save_filename = os.path.splitext(file.filename)[0] + ".png"
+    savepath = os.path.join(folderPath, save_filename)
+    image.save(savepath, format="PNG")
     
     return jsonify({"message": "Image is successfully saved!"})
 
