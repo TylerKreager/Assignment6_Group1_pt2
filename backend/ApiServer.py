@@ -31,6 +31,25 @@ def get_one_image(img):
     return jsonify(imgData)
 
 
+#Works tested in postman go to body/ form-data radiobutton/ key = image, File in dropdown, value = selecting img from local machine. 
+@app.route('/upload', methods=['POST'])
+def upload_image(): 
+    #Checks if the image was actually sent, if image is absent from the http req this message will be displayed. 
+    if "image" not in request.files:
+        return jsonify({"error": "No image sent in request!"})
+    
+    #assigning image to file, image is passed in via the HTTP request object its and its catergory is "files"
+    file = request.files['image']
+    
+    #concatetanating the folder path and the image name then passing savepath as an argument to file.save() which will save it.
+    savepath = os.path.join(folderPath, file.filename)
+    file.save(savepath)
+    
+    return jsonify({"message": "Image is successfully saved!"})
+
+
+
+
 #Tested with postman it works! Similar to retrieving a single image except using os to remove the file send
 #via the path param.
 @app.route('/delete/<img>', methods=['DELETE'])
