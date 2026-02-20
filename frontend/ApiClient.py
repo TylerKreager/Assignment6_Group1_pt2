@@ -15,7 +15,7 @@ class MainWindow(Tk):
     def __init__(self):
         super().__init__()
         self.title("Image API Client")
-        self.geometry("600x500")
+        self.geometry("600x510")
         self.configure(bg="lightblue")
 
         self.selected_image_name = tk.StringVar()
@@ -50,6 +50,9 @@ class MainWindow(Tk):
 
         load_btn = Button(dropdown_row, text="Load Image", command=self.load_selected_image) #handle the load image of retrieving image from collection
         load_btn.grid(row=0, column=2, padx=5)
+        
+        delete_btn = Button(dropdown_row, text="Delete Image", command=self.delete_image) #handle the delete image of removing image from collection
+        delete_btn.grid(row=0, column=3, padx=5)
 
         # Image display
         self.image_label = Label(self.main_frame) #actual display label that holds the loaded image
@@ -58,6 +61,10 @@ class MainWindow(Tk):
         # Upload button
         upload_btn = Button(self.main_frame, text="Upload Image", command=self.upload_image) #handle uploading image back to server
         upload_btn.pack(pady=10)
+        
+        
+        
+        
 
     # Server Client Code
 
@@ -123,7 +130,26 @@ class MainWindow(Tk):
         except Exception as e:
             messagebox.showerror("Unexpected Error", str(e))
 
+    def delete_image(self):
+        filename = self.selected_image_name.get()
+        #if for some reason the filename is null it just does nothing and returns nothing
+        if not filename: 
+            return
+        #following ops are wrapped in a try-catch incase there are any errors so the app doesn't crash.
+        try:
+            #Send a DELETE req to the APISERVER with the filename is a param in the url.
+            response = requests.delete(f"{self.BASE_URL}/delete/{filename}")
+            #this just catches any HTTP errors that may happen during this operation.
+            response.raise_for_status()
 
+            messagebox.showinfo("Success", f"Image '{filename}' deleted successfully!")
+            #Refresh the dropdown
+            self.fetch_image_list()
+        
+        except HTTPError as http_error:
+            messagebox.showerror("HTTP Error", f"Delete failed:\n{http_error}")  #Manage various HTTP errors
+        except Exception as e:
+            messagebox.showerror("Unexpected Error", str(e))
 
 app = MainWindow()
 app.mainloop()
